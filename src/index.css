@@ -351,9 +351,21 @@ a:focus-visible {
 .document-scroll {
   overflow: auto;
   flex: 1;
+  min-height: 0;
   padding: 0 26px 30px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+}
+.document-footer {
+  flex-shrink: 0;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+}
+.document-copy-button {
+  width: 100%;
+  min-height: 40px;
+  transition-property: background-color, border-color, color;
 }
 .markdown-body {
   font-size: 13px;

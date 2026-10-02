@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { useWorkspace } from '@/hooks/use-workspace'
+import { useDocumentCopy } from '@/hooks/use-document-copy'
 
 const KnowledgeCanvas = lazy(() =>
   import('@/components/knowledge-canvas').then((module) => ({ default: module.KnowledgeCanvas })),
@@ -37,6 +38,7 @@ function Workspace() {
   const { resolvedTheme, setTheme } = useTheme()
   const selectedId = selection?.projectId === project?.id ? (selection?.nodeId ?? null) : null
   const selectedNode = project?.nodes.find((node) => node.id === selectedId)
+  const documentCopy = useDocumentCopy(project, selectedNode)
   const dark = resolvedTheme === 'dark'
   const onSelect = (nodeId: string | null) =>
     setSelection(project && nodeId ? { projectId: project.id, nodeId } : null)
@@ -98,6 +100,9 @@ function Workspace() {
                   key={`${project.id}:${selectedNode.id}`}
                   node={selectedNode}
                   content={project.documents[selectedNode.id] ?? ''}
+                  documentIdentifier={documentCopy.identifier!}
+                  copyStatus={documentCopy.status}
+                  onCopy={documentCopy.copy}
                   onClose={() => onSelect(null)}
                 />
               </Suspense>

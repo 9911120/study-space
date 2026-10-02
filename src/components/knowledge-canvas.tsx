@@ -39,8 +39,10 @@ const ConceptCard = memo(function ConceptCard({ data, selected }: NodeProps<Stud
       <RelationHandles />
       <button
         className="concept-card nodrag"
+        data-node-id={data.id}
         onClick={(event) => {
           event.stopPropagation()
+          event.currentTarget.focus({ preventScroll: true })
           data.open(data.id)
         }}
         aria-pressed={selected}
@@ -57,8 +59,10 @@ const StudyGroup = memo(function StudyGroup({ data, selected }: NodeProps<StudyN
       <RelationHandles />
       <button
         className="group-header nodrag"
+        data-node-id={data.id}
         onClick={(event) => {
           event.stopPropagation()
+          event.currentTarget.focus({ preventScroll: true })
           data.open(data.id)
         }}
         aria-pressed={selected}
