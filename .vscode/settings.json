@@ -1,0 +1,5 @@
+{
+  "json.schemas": [
+    { "fileMatch": ["/knowledge/*/graph.json"], "url": "./schema/knowledge.schema.json" }
+  ]
+}
