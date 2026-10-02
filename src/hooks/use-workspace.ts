@@ -6,7 +6,7 @@ const hashProject = () => new URLSearchParams(location.hash.slice(1)).get('proje
 export function useWorkspace() {
   const [list, setList] = useState<ProjectList>({ projects: [], errors: [] })
   const [activeId, setActiveId] = useState<string | null>(
-    hashProject() ?? readStorage('study-space:project'),
+    hashProject() || readStorage('study-space:project') || null,
   )
   const [project, setProject] = useState<Project | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -14,7 +14,7 @@ export function useWorkspace() {
   const [connectionError, setConnectionError] = useState<string | null>(null)
   const activeRef = useRef(activeId)
   const sequence = useRef(0)
-  const selectProject = useCallback((id: string) => {
+  const selectProject = useCallback((id: string | null) => {
     if (activeRef.current === id) return
     activeRef.current = id
     ++sequence.current
@@ -22,8 +22,12 @@ export function useWorkspace() {
     setActiveId(id)
     setLoading(true)
     setError(null)
-    writeStorage('study-space:project', id)
-    history.replaceState(null, '', `#project=${encodeURIComponent(id)}`)
+    writeStorage('study-space:project', id ?? '')
+    history.replaceState(
+      null,
+      '',
+      id ? `#project=${encodeURIComponent(id)}` : `${location.pathname}${location.search}`,
+    )
   }, [])
   const refresh = useCallback(async () => {
     const ticket = ++sequence.current
@@ -46,7 +50,14 @@ export function useWorkspace() {
       setError(reason instanceof Error ? reason.message : '프로젝트를 불러오지 못했습니다.')
       try {
         const nextList = await api<ProjectList>('/projects')
-        if (ticket === sequence.current) setList(nextList)
+        if (ticket === sequence.current) {
+          setList(nextList)
+          const stillExists =
+            nextList.projects.some((item) => item.id === id) ||
+            nextList.errors.some((item) => item.id === id)
+          // 삭제된 프로젝트는 남은 프로젝트로 전환합니다. 손상된 파일은 오류를 유지합니다.
+          if (id && !stillExists) selectProject(nextList.projects[0]?.id ?? null)
+        }
       } catch {
         /* 기존 목록을 유지합니다. */
       }
