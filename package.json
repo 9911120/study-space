@@ -10,13 +10,12 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm test && npm run build",
+    "check": "pnpm typecheck && pnpm test && pnpm build",
     "schema": "node --import tsx scripts/export-schema.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@dagrejs/dagre": "^3.1.1",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/noto-sans-kr": "^5.3.0",
     "@xyflow/react": "^12.12.0",
@@ -32,7 +31,6 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "shadcn": "^4.21.1",
-    "sonner": "^2.0.8",
     "swagger-ui-express": "^5.0.1",
     "tw-animate-css": "^1.4.0",
     "zod": "^4.6.5"
@@ -56,5 +54,11 @@
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
