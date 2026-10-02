@@ -1,0 +1,697 @@
+{
+  "version": 1,
+  "id": "attention-is-all-you-need",
+  "title": "Attention Is All You Need",
+  "description": "Applied AI 엔지니어를 위한 Transformer 읽기입니다. 역사적 배경, 번역 모델의 구조, 어텐션 계산, 학습과 추론, 이후의 발전을 연결합니다.",
+  "color": "lime",
+  "nodes": [
+    {
+      "id": "history",
+      "title": "01 · 왜 Transformer가 필요했을까요?",
+      "summary": "2017년의 출발점은 챗봇이 아니라 기계 번역입니다. 문장을 순서대로 읽던 모델이 어떤 계산 병목을 가졌는지, 기존 어텐션에서 무엇을 바꾸었는지 역사적 흐름으로 살펴봅니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "document": "history.md",
+      "tags": [],
+      "size": {
+        "width": 1700,
+        "height": 540
+      }
+    },
+    {
+      "id": "rnn-lstm",
+      "title": "RNN·LSTM — 순서대로 읽기",
+      "summary": "RNN은 앞에서 만든 상태를 다음 토큰의 계산에 넘깁니다. LSTM은 정보를 유지하는 방식을 개선했지만 앞선 계산을 기다리는 구조는 남았습니다. 기억의 어려움과 병렬화의 어려움을 구분합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "document": "rnn-lstm.md",
+      "tags": [],
+      "parentId": "history"
+    },
+    {
+      "id": "seq2seq",
+      "title": "2014 · 인코더와 디코더",
+      "summary": "입력을 읽는 인코더와 출력을 만드는 디코더를 연결하면 길이가 다른 문장도 변환할 수 있습니다. 초기 방식은 입력 정보를 고정 크기 벡터에 모았습니다. 이 압축이 다음 연구의 질문이 됩니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "seq2seq.md",
+      "tags": [],
+      "parentId": "history"
+    },
+    {
+      "id": "early-attention",
+      "title": "2014–2015 · 다시 참고하기",
+      "summary": "Bahdanau 등의 어텐션은 출력 위치마다 필요한 입력 위치에 다른 가중치를 줍니다. 하나의 요약에만 의존하지 않고 원문 표현들을 다시 활용합니다. 다만 당시 모델에는 여전히 RNN이 있었습니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 180
+      },
+      "document": "early-attention.md",
+      "tags": [],
+      "parentId": "history"
+    },
+    {
+      "id": "transformer-idea",
+      "title": "2017 · 순환 없이 관계 계산",
+      "summary": "Transformer는 토큰 표현 사이의 관계를 어텐션으로 계산하면서 순환 연산을 없앱니다. 위치들을 묶어서 처리할 수 있고 먼 토큰도 직접 연결됩니다. 그렇다고 문장 생성 전체가 병렬이 되는 것은 아닙니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 1300,
+        "y": 180
+      },
+      "document": "transformer-idea.md",
+      "tags": [],
+      "parentId": "history"
+    },
+    {
+      "id": "architecture",
+      "title": "02 · 번역 한 번을 따라갑니다",
+      "summary": "원문 Transformer는 입력 문장을 읽는 인코더와 번역문을 쓰는 디코더로 구성됩니다. 토큰이 벡터와 문맥 표현을 거쳐 출력 확률이 되는 과정을 먼저 보고, 각 블록의 세부 요소로 내려갑니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 0,
+        "y": 760
+      },
+      "document": "architecture.md",
+      "tags": [],
+      "size": {
+        "width": 1700,
+        "height": 900
+      }
+    },
+    {
+      "id": "input-vectors",
+      "title": "토큰에서 입력 벡터로",
+      "summary": "토크나이저가 문자열을 정수 ID로 바꾸면 임베딩 표에서 각 ID의 벡터를 꺼냅니다. ID는 항목 번호이고 벡터는 계산용 표현입니다. 원문 모델은 여기에 위치 신호를 더해 블록에 전달합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "document": "input-vectors.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "encoder",
+      "title": "인코더 — 원문을 이해할 표현",
+      "summary": "인코더는 입력 문장의 각 위치에 문맥을 반영한 벡터를 만듭니다. Self-Attention으로 다른 입력 위치의 정보를 모으고 FFN으로 변환합니다. 결과는 문장 하나의 벡터가 아니라 위치별 벡터 목록입니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "encoder.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "decoder",
+      "title": "디코더 — 두 문맥으로 쓰기",
+      "summary": "디코더는 이미 쓴 출력과 인코더가 읽은 원문을 함께 참고합니다. 출력 쪽 Self-Attention에는 미래를 가리는 마스크가 있고, Cross-Attention에서는 디코더의 질문으로 인코더의 정보를 조회합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 180
+      },
+      "document": "decoder.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "output-distribution",
+      "title": "출력 — 벡터에서 토큰 후보로",
+      "summary": "디코더의 표현을 어휘 전체의 점수로 바꾸고 softmax로 확률을 계산합니다. 확률을 만드는 모델과 토큰을 고르는 디코딩 정책은 구별해야 합니다. 토큰 하나를 고른 뒤 그 결과가 다음 입력에 들어갑니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 1300,
+        "y": 180
+      },
+      "document": "output-distribution.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "position-encoding",
+      "title": "위치 인코딩 — 순서를 더하기",
+      "summary": "토큰 내용만 비교하는 어텐션에는 위치 정보가 따로 필요합니다. 원문은 서로 다른 주기의 사인·코사인 신호를 임베딩에 더합니다. 위치를 넣는 방식은 이후 모델에서 바뀔 수 있는 설계 요소입니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 540
+      },
+      "document": "position-encoding.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "feed-forward",
+      "title": "FFN — 위치별로 표현 변환",
+      "summary": "어텐션은 위치 사이의 정보를 섞고 FFN은 각 위치의 벡터를 비선형적으로 변환합니다. 같은 층의 위치들은 같은 FFN 가중치를 사용합니다. 이 역할 분담을 알아야 어텐션만으로 모델을 설명하지 않게 됩니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 540
+      },
+      "document": "feed-forward.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "residual-norm",
+      "title": "잔차 연결과 LayerNorm",
+      "summary": "잔차 연결은 기존 표현에 새 계산 결과를 더하는 경로를 둡니다. LayerNorm은 한 토큰의 특징 값들을 정규화합니다. 원문의 Post-LN과 이후 자주 쓰이는 Pre-LN은 연산 위치가 다릅니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 540
+      },
+      "document": "residual-norm.md",
+      "tags": [],
+      "parentId": "architecture"
+    },
+    {
+      "id": "attention-math",
+      "title": "03 · 어텐션을 숫자로 이해합니다",
+      "summary": "어텐션은 관련도 점수를 만들고, 허용된 위치에 가중치를 배분하고, 정보 벡터를 섞는 계산입니다. 같은 작은 예제를 끝까지 따라가며 Q·K·V, 마스크, softmax와 여러 헤드의 역할을 분리합니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 1940,
+        "y": 760
+      },
+      "document": "attention-math.md",
+      "tags": [],
+      "size": {
+        "width": 2120,
+        "height": 900
+      }
+    },
+    {
+      "id": "projections",
+      "title": "Q·K·V — 역할별 벡터 만들기",
+      "summary": "입력 표현에 서로 다른 학습 행렬을 곱해 Query, Key, Value를 만듭니다. 가중치 행렬은 학습된 값이고 Q·K·V는 이번 입력에서 계산한 값입니다. Self-Attention과 Cross-Attention은 입력의 출처가 다릅니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "document": "projections.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "qk-scores",
+      "title": "내적 — 참고할 비중의 점수",
+      "summary": "Query와 각 Key의 대응하는 숫자를 곱해 더하면 관련도 점수가 됩니다. 여러 Query와 Key의 비교를 QKᵀ로 묶습니다. 이 점수는 학습된 표현 공간의 값이며 일반적인 의미 유사도와 같다고 단정할 수 없습니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "qk-scores.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "mask-softmax",
+      "title": "마스크와 softmax — 비중 정하기",
+      "summary": "참고하면 안 되는 위치를 가린 뒤 점수를 가중치로 정규화합니다. 인과적 마스크는 미래 출력 위치를 막고 패딩 마스크는 채우기용 토큰을 제외합니다. 각 Query 행의 가중치 합은 1이 됩니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 180
+      },
+      "document": "mask-softmax.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "weighted-sum",
+      "title": "Value 가중합 — 정보를 섞기",
+      "summary": "앞에서 구한 가중치를 각 Value 벡터에 곱해 더합니다. 결과는 선택된 단어가 아니라 문맥을 반영한 새 벡터입니다. 두 후보의 작은 숫자를 직접 합쳐서 어텐션의 출력이 무엇인지 확인합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 1300,
+        "y": 180
+      },
+      "document": "weighted-sum.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "multi-head",
+      "title": "Multi-Head — 여러 결과 결합",
+      "summary": "여러 헤드가 서로 다른 학습 변환으로 앞의 계산을 병렬 수행합니다. 각 헤드의 출력을 이어 붙이고 다시 투영해 모델의 표현 폭으로 돌아옵니다. 헤드마다 사람이 정한 의미 역할이 있는 것은 아닙니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 1720,
+        "y": 180
+      },
+      "document": "multi-head.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "tensor-shapes",
+      "title": "벡터·행렬·텐서의 모양",
+      "summary": "벡터는 숫자 목록, 행렬은 목록을 행으로 쌓은 표입니다. 배치와 헤드 축까지 추가하면 텐서가 됩니다. 배열의 축이 무엇을 뜻하는지 따라가면 어텐션 수식과 메모리 크기를 함께 이해할 수 있습니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 540
+      },
+      "document": "tensor-shapes.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "scale-factor",
+      "title": "왜 √dₖ로 나누나요?",
+      "summary": "내적에 더해지는 항이 많아지면 점수의 규모도 커질 수 있습니다. 큰 점수 차이는 softmax를 지나치게 뾰족하게 만들 수 있어 제곱근으로 조정합니다. 항상 동일한 분산을 보장하는 마법의 상수는 아닙니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 540
+      },
+      "document": "scale-factor.md",
+      "tags": [],
+      "parentId": "attention-math"
+    },
+    {
+      "id": "training",
+      "title": "04 · 정답을 보며 가중치를 학습합니다",
+      "summary": "학습에서는 정답 번역문이 있으므로 여러 위치의 예측 문제를 한 번에 구성합니다. 마스크로 미래를 가리고, 틀린 정도를 손실로 계산한 뒤 가중치를 갱신합니다. 이 과정은 사용자가 답변을 받는 추론과 다릅니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 0,
+        "y": 1960
+      },
+      "document": "training.md",
+      "tags": [],
+      "size": {
+        "width": 1320,
+        "height": 900
+      }
+    },
+    {
+      "id": "teacher-forcing",
+      "title": "정답을 한 칸 옮겨 입력하기",
+      "summary": "학습할 때는 실제 정답의 앞부분을 디코더 입력으로 줍니다. 출력 정답을 한 칸 이동시켜 입력과 표적을 만들고 미래 위치를 마스킹합니다. 정답이 미리 있으므로 여러 예측 위치를 병렬 처리할 수 있습니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "document": "teacher-forcing.md",
+      "tags": [],
+      "parentId": "training"
+    },
+    {
+      "id": "cross-entropy",
+      "title": "손실 — 정답에 준 확률 평가",
+      "summary": "모델은 정답 토큰 하나와 어휘 전체의 확률 분포를 비교합니다. 정답에 낮은 확률을 주면 손실이 커집니다. 학습은 이 손실을 줄이도록 가중치를 조정하는 문제이며, 문장 품질 평가와는 구별됩니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "cross-entropy.md",
+      "tags": [],
+      "parentId": "training"
+    },
+    {
+      "id": "backprop",
+      "title": "역전파와 가중치 갱신",
+      "summary": "역전파는 손실이 각 가중치에 얼마나 민감한지 기울기를 구합니다. Optimizer는 그 정보를 사용해 가중치를 업데이트합니다. 문맥이 바뀌는 것과 가중치가 바뀌는 것을 구별하는 핵심 단계입니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 180
+      },
+      "document": "backprop.md",
+      "tags": [],
+      "parentId": "training"
+    },
+    {
+      "id": "training-recipe",
+      "title": "학습 설정도 결과의 일부입니다",
+      "summary": "좋은 블록 구조만으로 논문의 결과가 재현되지는 않습니다. 학습률 일정, dropout, label smoothing과 데이터 처리가 함께 작동합니다. 원문의 숫자는 실험 조건이며 모든 모델에 적용되는 정답은 아닙니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 540
+      },
+      "document": "training-recipe.md",
+      "tags": [],
+      "parentId": "training"
+    },
+    {
+      "id": "inference",
+      "title": "05 · 오늘의 추론과 서빙으로 연결합니다",
+      "summary": "여기부터는 원문을 바탕으로 오늘날 디코더 전용 LLM의 실행을 이해합니다. 프롬프트 처리와 토큰 생성은 다른 단계입니다. KV 캐시와 입력 길이를 연결하면 지연 시간과 메모리 사용을 설명할 수 있습니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 1600,
+        "y": 1960
+      },
+      "document": "inference.md",
+      "tags": [],
+      "size": {
+        "width": 1320,
+        "height": 900
+      }
+    },
+    {
+      "id": "prefill",
+      "title": "프리필 — 주어진 입력 처리",
+      "summary": "프롬프트 토큰들은 이미 주어져 있으므로 각 층에서 함께 처리할 수 있습니다. 마지막 위치의 표현에서 첫 생성 토큰의 분포를 얻습니다. 입력이 길수록 계산과 캐시에 들어갈 정보가 늘어납니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "document": "prefill.md",
+      "tags": [],
+      "parentId": "inference"
+    },
+    {
+      "id": "decode",
+      "title": "디코드 — 새 토큰으로 이어가기",
+      "summary": "선택한 토큰을 다음 입력에 붙여 새 분포를 계산하는 과정을 반복합니다. 캐시를 쓰면 과거 K·V는 재사용하지만 다음 토큰이 정해져야 하는 의존성은 남습니다. 스트리밍은 이 결과를 조금씩 전달하는 방식입니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "decode.md",
+      "tags": [],
+      "parentId": "inference"
+    },
+    {
+      "id": "stop-generation",
+      "title": "종료 — 토큰을 텍스트로 전달",
+      "summary": "종료 토큰이나 길이 제한 등 정해진 조건에 도달하면 생성을 멈춥니다. 생성된 ID는 디코딩되어 텍스트가 됩니다. 길이 제한 때문에 멈춘 응답과 정상 종료된 응답을 제품에서 구별하는 것이 중요합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 180
+      },
+      "document": "stop-generation.md",
+      "tags": [],
+      "parentId": "inference"
+    },
+    {
+      "id": "context-cost",
+      "title": "긴 문맥 — 계산·메모리·품질",
+      "summary": "토큰 수가 늘면 어텐션이 다루는 위치 쌍과 캐시가 커집니다. 수용 가능한 길이와 실제로 정보를 잘 활용하는 능력도 다릅니다. 긴 입력의 비용을 한 숫자로 단정하지 말고 계산 단계별로 나누어 봅니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 540
+      },
+      "document": "context-cost.md",
+      "tags": [],
+      "parentId": "inference"
+    },
+    {
+      "id": "kv-cache",
+      "title": "KV 캐시 — 문맥의 계산 결과 보관",
+      "summary": "KV 캐시는 각 층에서 이전 토큰의 Key와 Value를 저장해 다시 사용합니다. 모델의 지식이나 완성된 답변을 저장하는 캐시와 다릅니다. 층 수·문맥 길이·KV 헤드 수·정밀도에 따라 메모리가 달라집니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 540
+      },
+      "document": "kv-cache.md",
+      "tags": [],
+      "parentId": "inference"
+    },
+    {
+      "id": "legacy",
+      "title": "06 · 결과와 이후의 발전을 연결합니다",
+      "summary": "논문은 당시 번역 과제에서 구조의 효과를 평가했습니다. 그 결과를 읽고 계산상의 한계를 함께 살펴본 뒤, BERT·GPT와 파운데이션 모델로 이어진 흐름을 구분합니다. 마지막에는 실제 앱의 판단으로 연결합니다.",
+      "kind": "group",
+      "status": "exploring",
+      "position": {
+        "x": 0,
+        "y": 3160
+      },
+      "document": "legacy.md",
+      "tags": [],
+      "size": {
+        "width": 1320,
+        "height": 900
+      }
+    },
+    {
+      "id": "paper-findings",
+      "title": "논문 결과 — 무엇을 입증했나요?",
+      "summary": "원문은 WMT 2014 번역에서 BLEU와 학습 비용을 비교합니다. 높은 번역 점수와 당시의 계산 효율은 중요한 결과지만, 모든 언어·과제에서 우월하거나 사실성이 보장된다는 증거로 확대하면 안 됩니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 180
+      },
+      "document": "paper-findings.md",
+      "tags": [],
+      "parentId": "legacy"
+    },
+    {
+      "id": "complexity",
+      "title": "한계 — 병렬화에도 비용이 있습니다",
+      "summary": "모든 위치를 연결하는 어텐션은 짧은 계산 경로를 제공하지만 위치 쌍의 수가 늘어납니다. 토큰 길이와 표현 폭은 서로 다른 비용 축입니다. 병렬화 가능성과 실제 속도·메모리 효율을 구분합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 40,
+        "y": 540
+      },
+      "document": "complexity.md",
+      "tags": [],
+      "parentId": "legacy"
+    },
+    {
+      "id": "model-families",
+      "title": "BERT·GPT와 파운데이션 모델",
+      "summary": "Transformer는 구조이고 파운데이션 모델은 넓은 데이터에서 학습해 여러 과제로 적응하는 모델에 관한 개념입니다. BERT와 GPT는 서로 다른 블록 구성과 학습 목표를 택했습니다. 채팅 제품은 여기에 여러 층을 더합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 460,
+        "y": 540
+      },
+      "document": "model-families.md",
+      "tags": [],
+      "parentId": "legacy"
+    },
+    {
+      "id": "applied-bridge",
+      "title": "내 앱에서 무엇을 판단할까요?",
+      "summary": "논문에서 배운 개념을 RAG, 프롬프트 길이, 미세 조정과 지연 시간에 연결합니다. 기능 이름만 보지 않고 입력·가중치·캐시 중 무엇이 달라지는지 묻습니다. 품질과 성능은 실제 과제에서 따로 측정합니다.",
+      "kind": "concept",
+      "status": "exploring",
+      "position": {
+        "x": 880,
+        "y": 540
+      },
+      "document": "applied-bridge.md",
+      "tags": [],
+      "parentId": "legacy"
+    }
+  ],
+  "edges": [
+    {
+      "id": "rnn-lstm-to-seq2seq",
+      "source": "rnn-lstm",
+      "target": "seq2seq",
+      "relation": "sequence"
+    },
+    {
+      "id": "seq2seq-to-early-attention",
+      "source": "seq2seq",
+      "target": "early-attention",
+      "relation": "sequence"
+    },
+    {
+      "id": "early-attention-to-transformer-idea",
+      "source": "early-attention",
+      "target": "transformer-idea",
+      "relation": "sequence"
+    },
+    {
+      "id": "input-vectors-to-encoder",
+      "source": "input-vectors",
+      "target": "encoder",
+      "relation": "sequence"
+    },
+    {
+      "id": "encoder-to-decoder",
+      "source": "encoder",
+      "target": "decoder",
+      "relation": "sequence"
+    },
+    {
+      "id": "decoder-to-output-distribution",
+      "source": "decoder",
+      "target": "output-distribution",
+      "relation": "sequence"
+    },
+    {
+      "id": "input-vectors-has-position-encoding",
+      "source": "input-vectors",
+      "target": "position-encoding",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "encoder-has-feed-forward",
+      "source": "encoder",
+      "target": "feed-forward",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "encoder-has-residual-norm",
+      "source": "encoder",
+      "target": "residual-norm",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "projections-to-qk-scores",
+      "source": "projections",
+      "target": "qk-scores",
+      "relation": "sequence"
+    },
+    {
+      "id": "qk-scores-to-mask-softmax",
+      "source": "qk-scores",
+      "target": "mask-softmax",
+      "relation": "sequence"
+    },
+    {
+      "id": "mask-softmax-to-weighted-sum",
+      "source": "mask-softmax",
+      "target": "weighted-sum",
+      "relation": "sequence"
+    },
+    {
+      "id": "weighted-sum-to-multi-head",
+      "source": "weighted-sum",
+      "target": "multi-head",
+      "relation": "sequence"
+    },
+    {
+      "id": "projections-has-tensor-shapes",
+      "source": "projections",
+      "target": "tensor-shapes",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "qk-scores-has-scale-factor",
+      "source": "qk-scores",
+      "target": "scale-factor",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "teacher-forcing-to-cross-entropy",
+      "source": "teacher-forcing",
+      "target": "cross-entropy",
+      "relation": "sequence"
+    },
+    {
+      "id": "cross-entropy-to-backprop",
+      "source": "cross-entropy",
+      "target": "backprop",
+      "relation": "sequence"
+    },
+    {
+      "id": "backprop-has-training-recipe",
+      "source": "backprop",
+      "target": "training-recipe",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "prefill-to-decode",
+      "source": "prefill",
+      "target": "decode",
+      "relation": "sequence"
+    },
+    {
+      "id": "decode-to-stop-generation",
+      "source": "decode",
+      "target": "stop-generation",
+      "relation": "sequence"
+    },
+    {
+      "id": "prefill-has-context-cost",
+      "source": "prefill",
+      "target": "context-cost",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "decode-has-kv-cache",
+      "source": "decode",
+      "target": "kv-cache",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "paper-findings-has-complexity",
+      "source": "paper-findings",
+      "target": "complexity",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "paper-findings-has-model-families",
+      "source": "paper-findings",
+      "target": "model-families",
+      "relation": "hierarchy"
+    },
+    {
+      "id": "paper-findings-has-applied-bridge",
+      "source": "paper-findings",
+      "target": "applied-bridge",
+      "relation": "hierarchy"
+    }
+  ]
+}

@@ -38,7 +38,7 @@ pnpm start
 - 상위·하위 개념은 위에서 아래로 연결합니다. 형제끼리는 순서 화살표를 붙이지 않습니다.
 - 부모 그룹은 제목과 테두리로 자식들을 감쌉니다. 그룹 제목을 누르면 전체 설명을 읽습니다.
 
-카드 설명은 자르지 않고 표시합니다. 처음에는 출발점에서 읽기 좋은 배율로 열리며, 하단 전체 보기 버튼으로 지도 전체를 볼 수 있습니다. LLM 예시는 토큰화 → 임베딩 → Transformer → 생성의 흐름, Transformer의 구성 요소, 사전 학습 → 후속 학습 → 추론의 흐름으로 구성합니다.
+카드 설명은 자르지 않고 표시합니다. 처음에는 출발점에서 읽기 좋은 배율로 열리며, 하단 전체 보기 버튼으로 지도 전체를 볼 수 있습니다. 현재 학습 프로젝트는 **Attention Is All You Need**입니다. Applied AI 엔지니어가 모델 내부를 처음 공부하는 상황을 가정하며, 역사적 배경 → 번역 구조 → 어텐션 계산 → 학습 → 추론 → 결과와 이후 발전의 6개 그룹으로 구성합니다. 개념 카드 31개와 그룹 설명을 합쳐 37개 문서를 제공합니다. 원문의 내용과 이후의 LLM·서빙 개념을 구분합니다.
 
 ## 학습 내용 추가
 
@@ -46,15 +46,17 @@ pnpm start
 
 ```text
 knowledge/
-  llm/
+  attention-is-all-you-need/
     graph.json
     documents/
-      language-model.md
-      tokenization.md
+      history.md
+      rnn-lstm.md
       ...
 ```
 
 `graph.json`은 개념·연결·배치를, Markdown은 설명을 담습니다. 연결의 `relation`으로 `sequence`와 `hierarchy`를 구분하고, 그룹은 `kind: "group"`, `size`, 자식의 `parentId`로 정의합니다. 파일이 변경되면 SSE로 화면에 자동 반영됩니다. 기존 파일의 상태·태그·색상 메타데이터는 보존하지만 화면에는 표시하지 않습니다.
+
+공부는 첫 번째 그룹 제목인 [01 · 왜 Transformer가 필요했을까요?](knowledge/attention-is-all-you-need/documents/history.md)에서 시작합니다. 본문에는 계산 예시, 확인 질문과 출처가 포함됩니다.
 
 파일 작성 규칙은 [knowledge/AGENTS.md](knowledge/AGENTS.md)에 정리되어 있습니다. 잘못된 파일은 오류로 표시하며 원본을 수정하지 않습니다.
 
