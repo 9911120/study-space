@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
-import { api, ApiError, readStorage, writeStorage } from '@/lib/api'
-import type { Project, ProjectList, ProjectInput } from '../../shared/schema'
+import { api, readStorage, writeStorage } from '@/lib/api'
+import type { Project, ProjectList } from '../../shared/schema'
 
 const hashProject = () => new URLSearchParams(location.hash.slice(1)).get('project')
 export function useWorkspace() {
@@ -12,16 +11,13 @@ export function useWorkspace() {
   const [project, setProject] = useState<Project | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [connected, setConnected] = useState(false)
+  const [connectionError, setConnectionError] = useState<string | null>(null)
   const activeRef = useRef(activeId)
-  const projectRef = useRef(project)
   const sequence = useRef(0)
-  const saveLock = useRef(false)
   const selectProject = useCallback((id: string) => {
     if (activeRef.current === id) return
     activeRef.current = id
-    projectRef.current = null
+    ++sequence.current
     setProject(null)
     setActiveId(id)
     setLoading(true)
@@ -41,7 +37,6 @@ export function useWorkspace() {
       setList(nextList)
       setError(null)
       if (nextProject) {
-        projectRef.current = nextProject
         setProject((previous) =>
           previous?.revision === nextProject.revision ? previous : nextProject,
         )
@@ -65,13 +60,13 @@ export function useWorkspace() {
   useEffect(() => {
     const events = new EventSource('/api/events')
     const ready = () => {
-      setConnected(true)
+      setConnectionError(null)
       void refresh()
     }
     const change = () => {
       void refresh()
     }
-    const failure = () => setConnected(false)
+    const failure = () => setConnectionError('실시간 연결이 끊겼습니다. 다시 연결합니다.')
     events.addEventListener('ready', ready)
     events.addEventListener('change', change)
     events.addEventListener('watch-error', failure)
@@ -92,59 +87,12 @@ export function useWorkspace() {
       window.removeEventListener('hashchange', hashChange)
     }
   }, [refresh, selectProject])
-  const mutate = useCallback(
-    async (route: string, body: Record<string, unknown>, method = 'PATCH', revision?: string) => {
-      const current = projectRef.current
-      if (!current || saveLock.current) return null
-      saveLock.current = true
-      setSaving(true)
-      try {
-        const updated = await api<Project>(`/projects/${current.id}${route}`, {
-          method,
-          body: JSON.stringify({ ...body, revision: revision ?? current.revision }),
-        })
-        if (activeRef.current === updated.id) {
-          ++sequence.current
-          projectRef.current = updated
-          setProject(updated)
-          setError(null)
-        }
-        void refresh()
-        return updated
-      } catch (reason) {
-        toast.error(reason instanceof Error ? reason.message : '저장하지 못했습니다.')
-        if (reason instanceof ApiError && reason.status === 409) void refresh()
-        return null
-      } finally {
-        saveLock.current = false
-        setSaving(false)
-      }
-    },
-    [refresh],
-  )
-  const createProject = useCallback(
-    async (input: ProjectInput) => {
-      const created = await api<Project>('/projects', {
-        method: 'POST',
-        body: JSON.stringify(input),
-      })
-      selectProject(created.id)
-      toast.success('새 학습 공간을 만들었습니다.')
-      return created
-    },
-    [selectProject],
-  )
-  return {
-    list,
-    project,
-    activeId,
-    loading,
-    error,
-    saving,
-    connected,
-    selectProject,
-    refresh,
-    mutate,
-    createProject,
-  }
+  useEffect(() => {
+    if (!connectionError) return
+    const timer = setInterval(() => {
+      void refresh()
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [connectionError, refresh])
+  return { list, project, activeId, loading, error, connectionError, selectProject, refresh }
 }

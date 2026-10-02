@@ -67,54 +67,11 @@ export const graphSchema = z
     }
   })
 
-export const revisionSchema = z.string().regex(/^[a-f0-9]{64}$/)
-export const createProjectSchema = z
-  .object({
-    title: z.string().trim().min(1).max(120),
-    description: z.string().max(400).default(''),
-    color: z.enum(['lime', 'blue', 'amber', 'rose']).default('lime'),
-  })
-  .strict()
-export const createNodeSchema = z
-  .object({
-    revision: revisionSchema,
-    title: z.string().trim().min(1).max(120),
-    summary: z.string().max(400).default(''),
-    kind: kindSchema.default('concept'),
-    parentId: idSchema.optional(),
-    content: z.string().max(200000).default(''),
-  })
-  .strict()
-export const patchGraphSchema = z
-  .object({
-    revision: revisionSchema,
-    positions: z
-      .array(z.object({ id: idSchema, position: positionSchema }).strict())
-      .max(1000)
-      .optional(),
-    statuses: z
-      .array(z.object({ id: idSchema, status: statusSchema }).strict())
-      .max(1000)
-      .optional(),
-    edge: z.object({ source: idSchema, target: idSchema }).strict().optional(),
-  })
-  .strict()
-export const documentInputSchema = z
-  .object({ revision: revisionSchema, content: z.string().max(200000) })
-  .strict()
-
 export type KnowledgeNode = z.infer<typeof nodeSchema>
 export type KnowledgeEdge = z.infer<typeof edgeSchema>
 export type Graph = z.infer<typeof graphSchema>
 export type NodeStatus = KnowledgeNode['status']
 export type NodeKind = KnowledgeNode['kind']
 export type Project = Graph & { revision: string; documents: Record<string, string> }
-export type ProjectSummary = Pick<Graph, 'id' | 'title' | 'description' | 'color'> & {
-  nodeCount: number
-  understoodCount: number
-  questionCount: number
-}
+export type ProjectSummary = Pick<Graph, 'id' | 'title'>
 export type ProjectList = { projects: ProjectSummary[]; errors: { id: string; message: string }[] }
-export type GraphPatch = z.infer<typeof patchGraphSchema>
-export type NodeInput = z.infer<typeof createNodeSchema>
-export type ProjectInput = z.infer<typeof createProjectSchema>
