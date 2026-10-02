@@ -72,10 +72,11 @@ function SheetContent({
               variant="ghost"
               className="absolute top-3 right-3"
               size="icon-sm"
+              aria-label="패널 닫기"
             >
               <XIcon
               />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">닫기</span>
             </Button>
           </SheetPrimitive.Close>
         )}

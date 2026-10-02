@@ -1,10 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2023", "lib": ["ES2023"], "module": "ESNext",
-    "moduleResolution": "bundler", "strict": true, "skipLibCheck": true,
-    "noEmit": true, "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true, "resolveJsonModule": true,
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "server", "shared", "tests"]
+  "include": ["vite.config.ts", "vitest.config.ts", "server", "shared", "tests", "scripts"]
 }
