@@ -11,65 +11,77 @@ import {
   useOnViewportChange,
   useReactFlow,
   useStore,
-  type Node,
   type NodeProps,
 } from '@xyflow/react'
 import { Maximize, Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readStorage, writeStorage } from '@/lib/api'
-import type { KnowledgeNode, Project } from '../../shared/schema'
+import { createCanvasGraph, type StudyNode } from '@/lib/canvas-graph'
+import type { Project } from '../../shared/schema'
 import '@xyflow/react/dist/style.css'
 
-type ConceptData = KnowledgeNode & { open: (id: string) => void }
-type ConceptFlowNode = Node<ConceptData, 'concept'>
 type Props = { project: Project; selectedId: string | null; onSelect: (id: string | null) => void }
 
-const ConceptCard = memo(function ConceptCard({ data, selected }: NodeProps<ConceptFlowNode>) {
+function RelationHandles() {
+  return (
+    <>
+      <Handle id="sequence-in" type="target" position={Position.Left} isConnectable={false} />
+      <Handle id="sequence-out" type="source" position={Position.Right} isConnectable={false} />
+      <Handle id="hierarchy-in" type="target" position={Position.Top} isConnectable={false} />
+      <Handle id="hierarchy-out" type="source" position={Position.Bottom} isConnectable={false} />
+    </>
+  )
+}
+
+const ConceptCard = memo(function ConceptCard({ data, selected }: NodeProps<StudyNode>) {
   return (
     <div className={`concept-node ${selected ? 'is-selected' : ''}`}>
-      <Handle type="target" position={Position.Left} isConnectable={false} />
+      <RelationHandles />
       <button
         className="concept-card nodrag"
-        onClick={() => data.open(data.id)}
+        onClick={(event) => {
+          event.stopPropagation()
+          data.open(data.id)
+        }}
         aria-pressed={selected}
       >
         <span className="concept-title">{data.title}</span>
         {data.summary && <span className="concept-summary">{data.summary}</span>}
       </button>
-      <Handle type="source" position={Position.Right} isConnectable={false} />
     </div>
   )
 })
-const nodeTypes = { concept: ConceptCard }
+const StudyGroup = memo(function StudyGroup({ data, selected }: NodeProps<StudyNode>) {
+  return (
+    <div className={`study-group ${selected ? 'is-selected' : ''}`}>
+      <RelationHandles />
+      <button
+        className="group-header nodrag"
+        onClick={(event) => {
+          event.stopPropagation()
+          data.open(data.id)
+        }}
+        aria-pressed={selected}
+      >
+        <span className="group-title">{data.title}</span>
+        {data.summary && <span className="group-summary">{data.summary}</span>}
+      </button>
+    </div>
+  )
+})
+const nodeTypes = { concept: ConceptCard, studyGroup: StudyGroup }
 
 function CanvasInner({ project, selectedId, onSelect }: Props) {
-  const flow = useReactFlow<ConceptFlowNode>()
+  const flow = useReactFlow<StudyNode>()
   const width = useStore((state) => state.width)
   const initialized = useNodesInitialized()
   const zoom = useStore((state) => Math.round(state.transform[2] * 100))
-  const nodes = useMemo(
-    (): ConceptFlowNode[] =>
-      project.nodes.map((node) => ({
-        id: node.id,
-        type: 'concept',
-        position: node.position,
-        selected: node.id === selectedId,
-        data: { ...node, open: onSelect },
-      })),
-    [project.nodes, selectedId, onSelect],
+  const { nodes, edges } = useMemo(
+    () => createCanvasGraph(project, selectedId, onSelect),
+    [project, selectedId, onSelect],
   )
-  const edges = useMemo(
-    () =>
-      project.edges.map(({ id, source, target }) => ({
-        id,
-        source,
-        target,
-        type: 'smoothstep',
-        style: { stroke: 'var(--canvas-edge)', strokeWidth: 1.25 },
-      })),
-    [project.edges],
-  )
-  const storageKey = `study-space:viewport:${project.id}`
+  const storageKey = `study-space:viewport:v2:${project.id}`
+  const firstPosition = project.nodes.find((node) => !node.parentId)?.position ?? { x: 0, y: 0 }
   const viewport = useMemo(() => {
     try {
       const value = JSON.parse(readStorage(storageKey) ?? 'null')
@@ -90,22 +102,26 @@ function CanvasInner({ project, selectedId, onSelect }: Props) {
   })
   useEffect(() => {
     if (!selectedId || !initialized) return
-    const node = flow.getNode(selectedId)
+    const node = flow.getInternalNode(selectedId)
     if (node)
       void flow.setCenter(
-        node.position.x + 140,
-        node.position.y + (node.measured?.height ?? 130) / 2,
+        node.internals.positionAbsolute.x +
+          (node.type === 'studyGroup' ? 260 : (node.measured.width ?? 320) / 2),
+        node.internals.positionAbsolute.y +
+          (node.type === 'studyGroup' ? 65 : (node.measured.height ?? 180) / 2),
         { zoom: Math.max(flow.getZoom(), 0.9), duration: 200 },
       )
   }, [selectedId, initialized, width, flow])
 
   return (
     <div className="canvas-surface" aria-label="학습 캔버스">
-      <ReactFlow<ConceptFlowNode>
+      <ReactFlow<StudyNode>
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodeClick={(_event, node) => onSelect(node.id)}
+        onNodeClick={(_event, node) => {
+          onSelect(node.type === 'studyGroup' ? null : node.id)
+        }}
         onPaneClick={() => onSelect(null)}
         nodesDraggable={false}
         nodesConnectable={false}
@@ -113,9 +129,9 @@ function CanvasInner({ project, selectedId, onSelect }: Props) {
         edgesFocusable={false}
         edgesReconnectable={false}
         elementsSelectable={false}
-        fitView={!viewport}
-        defaultViewport={viewport}
-        fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
+        defaultViewport={
+          viewport ?? { x: 40 - firstPosition.x * 0.85, y: 40 - firstPosition.y * 0.85, zoom: 0.85 }
+        }
         minZoom={0.15}
         maxZoom={2}
         panOnScroll

@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { createApi } from '../server/api'
 import { writeProject } from './fixture'
+import { graphSchema } from '../shared/schema'
 
 describe('읽기 전용 학습 API', () => {
   let root: string
@@ -61,6 +62,14 @@ describe('읽기 전용 학습 API', () => {
     expect(spec.body.paths).not.toHaveProperty('/api/projects/{id}/graph')
     expect(spec.body.paths['/api/projects'].get.responses).toHaveProperty('405')
     expect(spec.body.components.schemas.Project.properties).toHaveProperty('revision')
+    const example =
+      spec.body.paths['/api/projects/{id}'].get.responses['200'].content['application/json'].example
+    const parsed = graphSchema.parse(example)
+    expect(parsed.nodes.some((node) => node.kind === 'group')).toBe(true)
+    expect(new Set(parsed.edges.map((edge) => edge.relation))).toEqual(
+      new Set(['sequence', 'hierarchy']),
+    )
+    for (const node of parsed.nodes) expect(example.documents[node.id]).toBeTypeOf('string')
     await request(api.app).get('/api/docs/').expect(200)
   })
   it('외부 파일 변경을 SSE로 알립니다.', async () => {

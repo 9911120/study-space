@@ -52,6 +52,8 @@
   --sidebar-accent: #ededed;
   --canvas-dot: #e2e2e2;
   --canvas-edge: #d1d1d1;
+  --canvas-sequence: #858585;
+  --group-background: #fafafa;
   --node-border: #e0e0e0;
   --node-selected: #777;
   --node-shadow: 0 2px 5px #00000004;
@@ -69,6 +71,8 @@
   --sidebar-accent: #2b2b2b;
   --canvas-dot: #303030;
   --canvas-edge: #454545;
+  --canvas-sequence: #929292;
+  --group-background: #181818;
   --node-border: #353535;
   --node-selected: #a3a3a3;
   --node-shadow: none;
@@ -204,7 +208,7 @@ a:focus-visible {
   --xy-background-color: var(--background);
 }
 .concept-node {
-  width: 280px;
+  width: 320px;
 }
 .concept-card {
   display: block;
@@ -224,28 +228,62 @@ a:focus-visible {
 .concept-title {
   display: block;
   color: var(--foreground);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 550;
   line-height: 1.6;
   letter-spacing: -0.25px;
   overflow-wrap: anywhere;
 }
 .concept-summary {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 12px;
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 14px;
   line-height: 1.8;
   color: var(--muted-foreground);
   margin-top: 8px;
 }
-.concept-node .react-flow__handle {
+.concept-node .react-flow__handle,
+.study-group .react-flow__handle {
   opacity: 0;
   width: 1px;
   height: 1px;
   border: none;
   pointer-events: none;
+}
+.study-group {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--node-border);
+  border-radius: 12px;
+  background: var(--group-background);
+}
+.study-group.is-selected {
+  border-color: var(--node-selected);
+}
+.group-header {
+  display: block;
+  text-align: left;
+  max-width: min(760px, 100%);
+  padding: 26px 30px;
+  border-radius: 12px;
+}
+.group-title {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--foreground);
+}
+.group-header:hover .group-title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.group-summary {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted-foreground);
 }
 .canvas-controls {
   display: flex;

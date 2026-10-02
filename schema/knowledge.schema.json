@@ -23,67 +23,200 @@
     "color": {
       "default": "lime",
       "type": "string",
-      "enum": ["lime", "blue", "amber", "rose"]
+      "enum": [
+        "lime",
+        "blue",
+        "amber",
+        "rose"
+      ]
     },
     "nodes": {
       "maxItems": 1000,
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "maxLength": 100,
-            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "summary": {
-            "type": "string",
-            "maxLength": 400
-          },
-          "kind": {
-            "type": "string",
-            "enum": ["concept", "question", "note"]
-          },
-          "status": {
-            "type": "string",
-            "enum": ["exploring", "understood", "question"]
-          },
-          "position": {
+        "oneOf": [
+          {
             "type": "object",
             "properties": {
-              "x": {
-                "type": "number",
-                "minimum": -100000,
-                "maximum": 100000
+              "id": {
+                "type": "string",
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
               },
-              "y": {
-                "type": "number",
-                "minimum": -100000,
-                "maximum": 100000
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 400
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "exploring",
+                  "understood",
+                  "question"
+                ]
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "minimum": -100000,
+                    "maximum": 100000
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": -100000,
+                    "maximum": 100000
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              },
+              "parentId": {
+                "description": "이 노드를 포함하는 그룹 ID입니다. position은 그룹 안의 상대 좌표입니다.",
+                "type": "string",
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "document": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+              },
+              "tags": {
+                "default": [],
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "concept",
+                  "question",
+                  "note"
+                ]
               }
             },
-            "required": ["x", "y"]
+            "required": [
+              "id",
+              "title",
+              "summary",
+              "status",
+              "position",
+              "document",
+              "kind"
+            ]
           },
-          "document": {
-            "type": "string",
-            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
-          },
-          "tags": {
-            "default": [],
-            "maxItems": 10,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "maxLength": 40
-            }
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 400
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "exploring",
+                  "understood",
+                  "question"
+                ]
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "minimum": -100000,
+                    "maximum": 100000
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": -100000,
+                    "maximum": 100000
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              },
+              "parentId": {
+                "description": "이 노드를 포함하는 그룹 ID입니다. position은 그룹 안의 상대 좌표입니다.",
+                "type": "string",
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "document": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+              },
+              "tags": {
+                "default": [],
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "group"
+              },
+              "size": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "number",
+                    "minimum": 400,
+                    "maximum": 20000
+                  },
+                  "height": {
+                    "type": "number",
+                    "minimum": 200,
+                    "maximum": 20000
+                  }
+                },
+                "required": [
+                  "width",
+                  "height"
+                ],
+                "description": "자식과 제목을 담는 그룹 영역의 픽셀 크기입니다."
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "summary",
+              "status",
+              "position",
+              "document",
+              "kind",
+              "size"
+            ]
           }
-        },
-        "required": ["id", "title", "summary", "kind", "status", "position", "document"]
+        ]
       }
     },
     "edges": {
@@ -107,14 +240,34 @@
             "maxLength": 100,
             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           },
+          "relation": {
+            "default": "hierarchy",
+            "description": "sequence는 좌우 순서 화살표, hierarchy는 위아래 상하 연결입니다. 기존 파일에서 생략하면 hierarchy로 읽습니다.",
+            "type": "string",
+            "enum": [
+              "sequence",
+              "hierarchy"
+            ]
+          },
           "label": {
             "type": "string",
             "maxLength": 80
           }
         },
-        "required": ["id", "source", "target"]
+        "required": [
+          "id",
+          "source",
+          "target"
+        ]
       }
     }
   },
-  "required": ["version", "id", "title", "description", "nodes", "edges"]
+  "required": [
+    "version",
+    "id",
+    "title",
+    "description",
+    "nodes",
+    "edges"
+  ]
 }

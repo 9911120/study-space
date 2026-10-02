@@ -17,23 +17,65 @@ const { $schema: _, ...graph } = z.toJSONSchema(graphSchema)
 const projectExample = {
   version: 1,
   id: 'llm',
-  title: 'LLM, 기초부터 이해하기',
-  description: '언어 모델을 공부합니다.',
+  title: 'LLM은 어떻게 작동하나요?',
+  description: '입력에서 출력까지의 흐름을 공부합니다.',
   color: 'lime',
   nodes: [
     {
-      id: 'start',
-      title: '언어 모델',
-      summary: '다음 토큰의 확률을 예측합니다.',
-      kind: 'concept',
+      id: 'process',
+      title: '입력 처리 과정',
+      summary: '문장을 숫자로 바꾸는 두 단계를 묶습니다.',
+      kind: 'group',
       status: 'exploring',
       position: { x: 0, y: 0 },
+      size: { width: 860, height: 800 },
+      document: 'process.md',
+      tags: [],
+    },
+    {
+      id: 'start',
+      title: '토큰화',
+      summary: '텍스트 조각을 정수 ID로 바꿉니다.',
+      kind: 'concept',
+      status: 'exploring',
+      position: { x: 40, y: 180 },
+      parentId: 'process',
       document: 'start.md',
       tags: [],
     },
+    {
+      id: 'embedding',
+      title: '임베딩',
+      summary: '토큰 ID를 벡터로 바꿉니다.',
+      kind: 'concept',
+      status: 'exploring',
+      position: { x: 460, y: 180 },
+      parentId: 'process',
+      document: 'embedding.md',
+      tags: [],
+    },
+    {
+      id: 'vocabulary',
+      title: '어휘 표',
+      summary: '토큰과 ID의 대응을 담습니다.',
+      kind: 'concept',
+      status: 'exploring',
+      position: { x: 40, y: 490 },
+      parentId: 'process',
+      document: 'vocabulary.md',
+      tags: [],
+    },
   ],
-  edges: [],
-  documents: { start: '# 언어 모델\n\n다음 토큰의 확률을 예측합니다.' },
+  edges: [
+    { id: 'tokens-to-vectors', source: 'start', target: 'embedding', relation: 'sequence' },
+    { id: 'tokens-vocabulary', source: 'start', target: 'vocabulary', relation: 'hierarchy' },
+  ],
+  documents: {
+    process: '# 입력 처리 과정\n\n문장을 숫자로 바꿉니다.',
+    start: '# 토큰화\n\n텍스트 조각을 정수 ID로 바꿉니다.',
+    embedding: '# 임베딩\n\n토큰 ID를 벡터로 바꿉니다.',
+    vocabulary: '# 어휘 표\n\n토큰과 ID의 대응을 담습니다.',
+  },
   revision: 'a'.repeat(64),
 }
 
@@ -41,7 +83,7 @@ export const openapi = {
   openapi: '3.1.0',
   info: {
     title: 'Study Space API',
-    version: '2.0.0',
+    version: '2.1.0',
     description:
       'knowledge 폴더의 학습 지도를 읽는 로컬 전용 API입니다. 생성·수정·삭제 API는 제공하지 않습니다. GET과 HEAD 이외의 요청에는 405와 Allow: GET, HEAD를 반환합니다. 파일은 Codex에서 직접 작성하며 변경 사항을 SSE로 알립니다.',
   },
@@ -57,7 +99,10 @@ export const openapi = {
             content: {
               'application/json': {
                 schema: ref('ProjectList'),
-                example: { projects: [{ id: 'llm', title: 'LLM, 기초부터 이해하기' }], errors: [] },
+                example: {
+                  projects: [{ id: 'llm', title: 'LLM은 어떻게 작동하나요?' }],
+                  errors: [],
+                },
               },
             },
           },
@@ -80,12 +125,15 @@ export const openapi = {
         ],
         responses: {
           '200': {
-            description: 'revision은 파일 변경을 감지하기 위한 해시입니다.',
+            description:
+              'revision은 파일 변경을 감지하기 위한 해시입니다. relation은 sequence(좌우 순서) 또는 hierarchy(위아래 상하)입니다. kind가 group인 노드는 size로 영역을 정하며, parentId는 자식의 소속 그룹을 나타냅니다. 자식 position은 그룹 기준 상대 좌표입니다.',
             content: { 'application/json': { schema: ref('Project'), example: projectExample } },
           },
           ...errors,
           '404': error('프로젝트가 없습니다.'),
-          '422': error('학습 파일, 문서 경로 또는 연결 데이터가 올바르지 않습니다.'),
+          '422': error(
+            '학습 파일, 문서 경로, 연결 또는 그룹 구조가 올바르지 않습니다. 없는 부모, 그룹이 아닌 부모와 순환 포함을 허용하지 않습니다.',
+          ),
         },
       },
     },
