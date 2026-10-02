@@ -23,12 +23,7 @@
     "color": {
       "default": "lime",
       "type": "string",
-      "enum": [
-        "lime",
-        "blue",
-        "amber",
-        "rose"
-      ]
+      "enum": ["lime", "blue", "amber", "rose"]
     },
     "nodes": {
       "maxItems": 1000,
@@ -54,11 +49,7 @@
               },
               "status": {
                 "type": "string",
-                "enum": [
-                  "exploring",
-                  "understood",
-                  "question"
-                ]
+                "enum": ["exploring", "understood", "question"]
               },
               "position": {
                 "type": "object",
@@ -74,10 +65,7 @@
                     "maximum": 100000
                   }
                 },
-                "required": [
-                  "x",
-                  "y"
-                ]
+                "required": ["x", "y"]
               },
               "parentId": {
                 "description": "이 노드를 포함하는 그룹 ID입니다. position은 그룹 안의 상대 좌표입니다.",
@@ -100,22 +88,10 @@
               },
               "kind": {
                 "type": "string",
-                "enum": [
-                  "concept",
-                  "question",
-                  "note"
-                ]
+                "enum": ["concept", "question", "note"]
               }
             },
-            "required": [
-              "id",
-              "title",
-              "summary",
-              "status",
-              "position",
-              "document",
-              "kind"
-            ]
+            "required": ["id", "title", "summary", "status", "position", "document", "kind"]
           },
           {
             "type": "object",
@@ -136,11 +112,7 @@
               },
               "status": {
                 "type": "string",
-                "enum": [
-                  "exploring",
-                  "understood",
-                  "question"
-                ]
+                "enum": ["exploring", "understood", "question"]
               },
               "position": {
                 "type": "object",
@@ -156,10 +128,7 @@
                     "maximum": 100000
                   }
                 },
-                "required": [
-                  "x",
-                  "y"
-                ]
+                "required": ["x", "y"]
               },
               "parentId": {
                 "description": "이 노드를 포함하는 그룹 ID입니다. position은 그룹 안의 상대 좌표입니다.",
@@ -198,23 +167,11 @@
                     "maximum": 20000
                   }
                 },
-                "required": [
-                  "width",
-                  "height"
-                ],
+                "required": ["width", "height"],
                 "description": "자식과 제목을 담는 그룹 영역의 픽셀 크기입니다."
               }
             },
-            "required": [
-              "id",
-              "title",
-              "summary",
-              "status",
-              "position",
-              "document",
-              "kind",
-              "size"
-            ]
+            "required": ["id", "title", "summary", "status", "position", "document", "kind", "size"]
           }
         ]
       }
@@ -244,30 +201,16 @@
             "default": "hierarchy",
             "description": "sequence는 좌우 순서 화살표, hierarchy는 위아래 상하 연결입니다. 기존 파일에서 생략하면 hierarchy로 읽습니다.",
             "type": "string",
-            "enum": [
-              "sequence",
-              "hierarchy"
-            ]
+            "enum": ["sequence", "hierarchy"]
           },
           "label": {
             "type": "string",
             "maxLength": 80
           }
         },
-        "required": [
-          "id",
-          "source",
-          "target"
-        ]
+        "required": ["id", "source", "target"]
       }
     }
   },
-  "required": [
-    "version",
-    "id",
-    "title",
-    "description",
-    "nodes",
-    "edges"
-  ]
+  "required": ["version", "id", "title", "description", "nodes", "edges"]
 }

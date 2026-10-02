@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm typecheck && pnpm test && pnpm build",
-    "schema": "node --import tsx scripts/export-schema.ts",
+    "schema": "node --import tsx scripts/export-schema.ts && prettier --write schema/knowledge.schema.json",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
